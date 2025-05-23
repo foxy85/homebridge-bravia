@@ -13,6 +13,7 @@
   "keywords": [
     "homebridge-plugin",
     "sony",
+    "bravia",
     "androidtv",
     "tv",
     "homebridge"
@@ -24,14 +25,13 @@
   },
   "homepage": "https://github.com/normen/homebridge-bravia#readme",
   "engines": {
-    "homebridge": ">=0.4.46",
-    "node": ">=0.12.0"
+    "homebridge": ">1.6.0 || ^2.0.0",
+    "node": "^18.0.0 || ^20.0.0 || ^22.0.0"
   },
+  "displayName": "Homebridge Bravia",
+  "pluginAlias": "BraviaPlatform",
   "dependencies": {
     "base-64": "^0.1.0",
     "wake_on_lan": "^1.0.0"
-  },
-  "devDependencies": {
-    "homebridge": "^1.3.2"
   }
 }
