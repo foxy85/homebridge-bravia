@@ -49,8 +49,7 @@ class BraviaPlatform {
     } else {
       this.log('Restoring ' + accessory.displayName + ' from HomeKit');
       // TODO: reachable
-      accessory.reachable = true;
-      // if its restored its registered
+            // if its restored its registered
       self.devices.push(new SonyTV(this, existingConfig, accessory));
       accessory.context.isRegisteredInHomeKit = true;
     }
@@ -380,7 +379,7 @@ class SonyTV {
         changeDone = true;
       }
     });
-    if (!this.accessory.context.isRegisteredInHomeKit) {
+    if (!this.accessory.context.isexternal) {
       // add base services that haven't been added yet
       this.services.forEach(service => {
         try {
@@ -395,8 +394,7 @@ class SonyTV {
         }
       });
       this.log('Registering HomeBridge Accessory for ' + this.name);
-      this.accessory.context.isRegisteredInHomeKit = true;
-      if (!this.accessory.context.isexternal) {
+            if (!this.accessory.context.isexternal) {
         this.platform.api.registerPlatformAccessories('homebridge-bravia', 'BraviaPlatform', [this.accessory]);
       } else {
         try {
@@ -1123,5 +1121,6 @@ module.exports = function (homebridge) {
   Characteristic = homebridge.hap.Characteristic;
   UUIDGen = homebridge.hap.uuid;
   STORAGE_PATH = updateStorage(homebridge.user.storagePath());
+  // Dynamic registration is already compliant with Homebridge v2.x
   homebridge.registerPlatform('homebridge-bravia', 'BraviaPlatform', BraviaPlatform, true);
 };
