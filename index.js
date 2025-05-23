@@ -51,7 +51,7 @@ class BraviaPlatform {
       // TODO: reachable
             // if its restored its registered
       self.devices.push(new SonyTV(this, existingConfig, accessory));
-      accessory.context.isRegisteredInHomeKit = true;
+     // accessory.context.isRegisteredInHomeKit = true;
     }
   }
 }
@@ -379,40 +379,44 @@ class SonyTV {
         changeDone = true;
       }
     });
-    if (!this.accessory.context.isexternal) {
-      // add base services that haven't been added yet
-      this.services.forEach(service => {
-        try {
-          if (!self.accessory.services.includes(service)) {
-            self.log('Adding base service to accessory');
-            self.accessory.addService(service);
-            changeDone = true;
-          }
-        } catch (e) {
-          self.log('Can\'t add service!');
-          self.log(e);
-        }
-      });
-      this.log('Registering HomeBridge Accessory for ' + this.name);
-            if (!this.accessory.context.isexternal) {
-        this.platform.api.registerPlatformAccessories('homebridge-bravia', 'BraviaPlatform', [this.accessory]);
-      } else {
-        try {
-          const data = JSON.stringify(this.accessory.context);
-          fs.writeFileSync(STORAGE_PATH + '/sonytv-context-' + this.accessory.context.config.name + '.json', data);
-        } catch (e) {
-          this.log(e);
-        }
-        this.platform.api.publishExternalAccessories('homebridge-bravia', [this.accessory]);
+  if (!this.accessory._associatedHAPAccessory && !this.accessory.context.isexternal) {
+  // Add base services if not yet added
+  this.services.forEach(service => {
+    try {
+      if (!this.accessory.services.includes(service)) {
+        this.log('Adding base service to accessory');
+        this.accessory.addService(service);
+        changeDone = true;
       }
-    } else if (changeDone) {
-      this.log('Updating HomeBridge Accessory for ' + this.name);
-      this.platform.api.updatePlatformAccessories([this.accessory]);
+    } catch (e) {
+      this.log('Can\'t add service!');
+      this.log(e);
     }
-    if (this.accessory.context.isexternal) {
-      this.saveChannelsToFile();
-    }
-    this.receivingSources = false;
+  });
+
+  this.log('Registering HomeBridge Accessory for ' + this.name);
+  this.platform.api.registerPlatformAccessories('homebridge-bravia', 'BraviaPlatform', [this.accessory]);
+
+} else if (this.accessory.context.isexternal) {
+  try {
+    const data = JSON.stringify(this.accessory.context);
+    fs.writeFileSync(STORAGE_PATH + '/sonytv-context-' + this.accessory.context.config.name + '.json', data);
+  } catch (e) {
+    this.log(e);
+  }
+  this.platform.api.publishExternalAccessories('homebridge-bravia', [this.accessory]);
+
+} else if (changeDone) {
+  this.log('Updating HomeBridge Accessory for ' + this.name);
+  this.platform.api.updatePlatformAccessories([this.accessory]);
+}
+
+if (this.accessory.context.isexternal) {
+  this.saveChannelsToFile();
+}
+
+this.receivingSources = false;
+   
   }
   // initialize a scan for new sources
   receiveSources(checkPower = null) {
